@@ -1,0 +1,154 @@
+{
+  "topic-1": {
+    "title": "Snakcks",
+    "items": {
+      "item-1": {
+        "title": "Doritos",
+        "rank": 0
+      },
+      "item-2": {
+        "title": "Takis",
+        "rank": 0
+      },
+      "item-3": {
+        "title": "Combos",
+        "rank": 0
+      },
+      "item-4": {
+        "title": "Veggie straw",
+        "rank": 0
+      },
+      "item-5": {
+        "title": "Goldfish",
+        "rank": 0
+      }
+    }
+  },
+  "topic-2": {
+    "title": "Foods",
+    "items": {
+      "item-1": {
+        "title": "Pizza",
+        "rank": 0
+      },
+      "item-2": {
+        "title": "Sushi",
+        "rank": 0
+      },
+      "item-3": {
+        "title": "French fries",
+        "rank": 0
+      },
+      "item-4": {
+        "title": "Cheese steak",
+        "rank": 0
+      },
+      "item-5": {
+        "title": "Mac n cheese",
+        "rank": 0
+      }
+    }
+  },
+
+  "topic-3": {
+    "title": "Nba players",
+    "items": {
+      "item-1": {
+        "title": "Luka",
+        "rank": 0
+      },
+      "item-2": {
+        "title": "Russell",
+        "rank": 0
+      },
+      "item-3": {
+        "title": "Kyrie",
+        "rank": 0
+      },
+      "item-4": {
+        "title": "Mitchell",
+        "rank": 0
+      },
+      "item-5": {
+        "title": "Simmons",
+        "rank": 0
+      }
+    }
+  },
+
+  "topic-4": {
+    "title": "Appliances",
+    "items": {
+      "item-1": {
+        "title": "Fridge",
+        "rank": 0
+      },
+      "item-2": {
+        "title": "Microwave",
+        "rank": 0
+      },
+      "item-3": {
+        "title": "Blender",
+        "rank": 0
+      },
+      "item-4": {
+        "title": "Dishwasher",
+        "rank": 0
+      },
+      "item-5": {
+        "title": "Oven",
+        "rank": 0
+      }
+    }
+  },
+  "topic-5": {
+    "title": "US States",
+    "items": {
+      "item-1": {
+        "title": "Florida",
+        "rank": 0
+      },
+      "item-2": {
+        "title": "California",
+        "rank": 0
+      },
+      "item-3": {
+        "title": "New York",
+        "rank": 0
+      },
+      "item-4": {
+        "title": "New Jersey",
+        "rank": 0
+      },
+      "item-5": {
+        "title": "Texas",
+        "rank": 0
+      }
+    }
+  },
+  "topic-6": {
+    "title": "Shows",
+    "items": {
+      "item-1": {
+        "title": "Stranger Things",
+        "rank": 0
+      },
+      "item-2": {
+        "title": "Game of Thrones",
+        "rank": 0
+      },
+      "item-3": {
+        "title": "The Walking Dead",
+        "rank": 0
+      },
+      "item-4": {
+        "title": "You",
+        "rank": 0
+      },
+      "item-5": {
+        "title": "XYZ",
+        "rank": 0
+      }
+    }
+  }
+}
