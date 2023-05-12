@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row } from "react-bootstrap";
+import { Container, Row, Col } from "react-bootstrap";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
-import { HttpURL, Api, TodayTopic, SelectedDataHttpURL } from "../utils.js";
+import { HttpURL, Api, SelectedDataHttpURL } from "../utils.js";
 // import jsonData from "../data.json";
 // import axios from "axios";
 
@@ -53,37 +53,55 @@ const Home = () => {
   };
   return (
     <section>
-      <Container fluid className="home-container col-md-6">
-        <Row className="header">
-          <p>
-            Maazle <span className="green">Game</span>{" "}
-            <small className="gray">#438</small>
-          </p>
-          <h4>
-            Today topic is <b className="yellow topic">{jsonData.title}</b>
-          </h4>
-        </Row>
-        <form onSubmit={handleSubmit}>
-          {jsonData.items ? (
-            <Row className="foods col-md-8 offset-2 mb-4">
-              {Object.keys(jsonData.items).map((item) => (
-                <div className="food-item">
-                  <div>{jsonData.items[item].title}</div>
-                  <input
-                    type="text"
-                    value={values[item] || ""}
-                    onChange={(e) => handleChange(e, item)}
-                  />
-                </div>
-              ))}
+      <Container fluid className="home-container">
+        <div className="col-md-8 col-xxl-6 col-xl-6 col-sm-12 col-xs-12 offset-xl-3 offset-md-2 offset-xxl-3">
+          <form onSubmit={handleSubmit}>
+            <Row className="header mb-5">
+              <p>
+                Maazle <span className="green">Game</span>{" "}
+                <small className="gray">#438</small>
+              </p>
+              <h4>
+                Today topic is <b className="yellow topic">{jsonData.title}</b>
+              </h4>
             </Row>
-          ) : (
-            <p className="loading">Loading...</p>
-          )}
-          <Row className="col-md-6 offset-3">
-            <input type="submit" className="view-chart" value="View Chart" />
-          </Row>
-        </form>
+            {jsonData.items ? (
+              <Row className="foods mb-5">
+                {Object.keys(jsonData.items).map((item) => (
+                  <div
+                    className="d-flex flex-direction-row justify-content-between"
+                    key={item}
+                  >
+                    <Col xl={8} md={8} sm={8} xs={8}>
+                      <div className="food-item">
+                        {jsonData.items[item].title}
+                      </div>
+                    </Col>
+                    <Col xl={2} md={2} sm={2} xs={2}>
+                      <input
+                        type="text"
+                        value={values[item] || ""}
+                        onChange={(e) => handleChange(e, item)}
+                        className="form-control col-md-4 col-sm-4"
+                      />
+                    </Col>
+                  </div>
+                ))}
+              </Row>
+            ) : (
+              <p className="loading">Loading...</p>
+            )}
+            <Row>
+              <Col md={6} xl={6}>
+                <input
+                  type="submit"
+                  className="view-chart"
+                  value="View Chart"
+                />
+              </Col>
+            </Row>
+          </form>
+        </div>
       </Container>
     </section>
   );

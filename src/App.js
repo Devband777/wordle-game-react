@@ -8,12 +8,7 @@ import {
 
 import Home from "./pages/Home";
 import MyChart from "./pages/MyChart";
-import Project from "./pages/Projects";
-import Resume from "./pages/Resume";
-import Contact from "./pages/Contact";
 
-import Navbar from "./components/Navbar/Navbar";
-import Footer from "./components/Footer/Footer";
 import Preloader from "./components/PreLoader";
 import ScrollToTop from "./components/ScrollToTop";
 

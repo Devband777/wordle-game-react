@@ -24,15 +24,9 @@
     display: flex;
     gap: 20px;
 }
-.food-item {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
 
-.food-item div {
+.food-item {
     border: 3px solid #fff;
-    width: 300px;
     padding: 5px 10px;
     font-size: 24px;
     font-weight: 600;
@@ -41,14 +35,14 @@
 .food-item div:hover {
     color:#dc2bff40;
 }
-.food-item input {
-    width: 50px;
+.foods input {
     border: 3px solid #fff;
     padding: 5px 10px;
     font-size: 24px;
     font-weight: 600;
     color: #fff;
     text-align: center;
+    background: none;
 }
 
 .loading {
@@ -65,16 +59,15 @@
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
-    margin-top: 10px;
     padding: 0 50px;
     font-size: 28px;
-    width: fit-content;
     height: 80px;
     background: #3903fd2d;
     border: 3px solid #fff;
     border-radius: 20px;
     color: #fff;
     text-decoration: none;
+    margin: auto;
 }
 .view-chart:hover {
     background-color: #ffffff1f;
@@ -82,4 +75,11 @@
 }
 .view-chart::selection {
     background-color: #00aef81f;
+}
+.keyboard button {
+width: 100px;
+height: 100px;
+background-color: black;
+color: white;
+font-size: 42px;
 }
