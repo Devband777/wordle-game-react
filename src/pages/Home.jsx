@@ -3,8 +3,6 @@ import { Container, Row, Col } from "react-bootstrap";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
 import { HttpURL, Api, SelectedDataHttpURL } from "../utils.js";
-// import jsonData from "../data.json";
-// import axios from "axios";
 
 const Home = () => {
   const [values, setValues] = useState([]);
@@ -23,11 +21,7 @@ const Home = () => {
       e.preventDefault();
       return;
     }
-    // if(values.length > 1 && ) {
-    //   console.log(num)
-    //   e.preventDefault();
-    //   return;
-    // }
+    
     setValues(prevValues => [...prevValues, num]);
     let keyboardItems = document.getElementsByClassName("keyboard-item");
     keyboardItems[num - 1].setAttribute("disabled", true);
@@ -79,10 +73,10 @@ const Home = () => {
       updatedItems[item].rank = jsonData.items[item].rank + parseInt(newValue);
     });
     console.log(updatedItems)
-    // Api.put(SelectedDataHttpURL, { ...jsonData, items: updatedItems })
-    //   .then((res) => console.log("Updated: ", res.data.record))
-    //   .catch((err) => console.log("Error: ", err));
-    // navigate("/chart");
+    Api.put(SelectedDataHttpURL, { ...jsonData, items: updatedItems })
+      .then((res) => console.log("Updated: ", res.data.record))
+      .catch((err) => console.log("Error: ", err));
+    navigate("/chart");
   };
 
   useEffect(() => {
