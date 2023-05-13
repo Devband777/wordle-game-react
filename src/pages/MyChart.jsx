@@ -13,7 +13,7 @@ const MyChart = () => {
     Object.keys(data.items).forEach((item) => {
       temp += data.items[item].rank;
     });
-    const tempChartData = [["Title", "Like Graph"]];
+    const tempChartData = [["Title", "Like"]];
     Object.keys(data.items).forEach((item) => {
       tempChartData.push([
         data.items[item].title,
@@ -31,12 +31,12 @@ const MyChart = () => {
     backgroundColor: "none",
     titleTextStyle: {
       color: "#fff", // set the title color
-      fontSize: 32, // set the title font size
+      fontSize: 38, // set the title font size
     },
     legend: {
       textStyle: {
         color: "#fff",
-        fontSize: 24,
+        fontSize: 20,
         textTransform: "uppercase",
       },
     },
@@ -52,7 +52,7 @@ const MyChart = () => {
   }, []);
 
   return (
-    <Container className="chart-contaniter py-5">
+    <Container className="align-item-center chart-contaniter py-3">
       <Row>
         {chartData.length > 0 ? (
           <Chart
@@ -63,7 +63,7 @@ const MyChart = () => {
             height={"800px"}
           />
         ) : (
-          <p className="loading">Loading...</p>
+          <p className="loading mt-5">Loading...</p>
         )}
       </Row>
     </Container>

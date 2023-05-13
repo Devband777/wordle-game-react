@@ -1,4 +1,4 @@
-.home-container{
+.home-container {
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
@@ -13,7 +13,7 @@
 }
 
 .green {
-    color:rgb(17, 249, 9)
+    color: rgb(17, 249, 9)
 }
 
 .gray {
@@ -35,14 +35,17 @@
     user-select: none;
     text-shadow: 1px 1px 1px #0003;
 }
+
 .food-item div:hover {
-    color:#dc2bff40;
+    color: #dc2bff40;
 }
+
 @media (max-width: 320px) {
     .food-item {
         font-size: 22px;
     }
 }
+
 .input-num {
     font-size: 2rem;
     font-weight: 700;
@@ -60,17 +63,30 @@
     user-select: none;
 }
 
+.input-num[contenteditable]:focus {
+    outline: 0px solid transparent;
+    caret-color: transparent;
+}
+
 .active {
-    
+    display: inline-block;
+    align-items: center;
     border: 5px solid #fff;
 }
 
 
 .loading {
-    font-size: 120px;
+    font-size: 80px;
     margin: auto;
     color: #fff;
 }
+
+@media (max-width: 425px) {
+    .loading {
+        font-size: 80px;
+    }
+}
+
 .header p {
     text-align: left;
 }
@@ -83,28 +99,37 @@
     padding: 0 50px;
     font-size: 28px;
     height: 80px;
-    background: #8D9EFF;
+    background: #6f7dcd;
     border: 3px solid #fff;
     border-radius: 20px;
     color: #fff;
-    text-decoration: none;
+    text-shadow: 1px 1px 1px #0003;
+
     margin: auto;
     user-select: none;
 }
+
 .view-chart:hover {
     background-color: #ffffff1f;
     color: #fff;
 }
+
 .view-chart:disabled {
-    
+
     background-color: #707071;
     border: 3px solid #ddd;
     color: #ccca;
+}
+.view-chart:focus {
+    
+    outline: 0px solid transparent;
+    background-color: #ffffff1f;
 }
 
 .view-chart::selection {
     background-color: #00aef81f;
 }
+
 .keyboard .keyboard-item {
     background-color: #161a25;
     display: flex;
@@ -120,6 +145,7 @@
     cursor: pointer;
     user-select: none;
 }
+
 .keyboard .keyboard-item:disabled {
     background: #413856;
     color: #ccca;

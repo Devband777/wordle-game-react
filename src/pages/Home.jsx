@@ -13,16 +13,39 @@ const Home = () => {
 
   const navigate = useNavigate();
 
+  const getNumFromKeyCode = (keyCode) => {
+    switch (keyCode) {
+      case 97:
+      case 49:
+        return 1;
+
+      case 98:
+      case 50:
+        return 2;
+      case 99:
+      case 51:
+        return 3;
+      case 100:
+      case 52:
+        return 4;
+      case 101:
+      case 53:
+        return 5;
+      default:
+        return null;
+    }
+  };
+
   const handleKeyDown = (e, index) => {
     const keyCode = e.keyCode || e.which;
-    const num = String.fromCharCode(keyCode);
+    const num = getNumFromKeyCode(keyCode);
 
-    if (keyCode < 49 || keyCode > 53 || values.includes(num)) {
+    if (num == null || values.includes(num)) {
       e.preventDefault();
       return;
     }
-    
-    setValues(prevValues => [...prevValues, num]);
+
+    setValues((prevValues) => [...prevValues, num]);
     let keyboardItems = document.getElementsByClassName("keyboard-item");
     keyboardItems[num - 1].setAttribute("disabled", true);
     if (index === Object.keys(jsonData.items).length - 1) {
@@ -32,6 +55,7 @@ const Home = () => {
     } else {
       const nextInput = inputRefs.current[index + 1];
       if (nextInput) {
+        e.preventDefault();
         inputRefs.current[index].setAttribute("contentEditable", false);
         inputRefs.current[index].classList.remove("active");
         nextInput.classList.add("active");
@@ -39,13 +63,13 @@ const Home = () => {
         nextInput.focus();
       }
     }
-    
+
     setKeyboardIdx(keyboardIdx + 1);
   };
 
   const handleKeyBoardPress = (e) => {
     e.preventDefault();
-    setValues(prevValues => [...prevValues, e.target.value]);
+    setValues((prevValues) => [...prevValues, e.target.value]);
 
     e.target.setAttribute("disabled", true);
     if (keyboardIdx === Object.keys(jsonData.items).length - 1) {
@@ -72,7 +96,7 @@ const Home = () => {
       const newValue = values[index] || 0;
       updatedItems[item].rank = jsonData.items[item].rank + parseInt(newValue);
     });
-    console.log(updatedItems)
+    console.log(updatedItems);
     Api.put(SelectedDataHttpURL, { ...jsonData, items: updatedItems })
       .then((res) => console.log("Updated: ", res.data.record))
       .catch((err) => console.log("Error: ", err));
@@ -122,16 +146,16 @@ const Home = () => {
                     className="d-flex flex-direction-row justify-content-between"
                     key={item}
                   >
-                      <div className="food-item col-8">
-                        {jsonData.items[item].title}
-                      </div>
-                      <div
-                        className="input-num col-2"
-                        contentEditable={false}
-                        onKeyDown={(e) => handleKeyDown(e, index)}
-                        ref={(el) => (inputRefs.current[index] = el)}
-                        dangerouslySetInnerHTML={{ __html: values[index] }}
-                      />
+                    <div className="food-item col-8">
+                      {jsonData.items[item].title}
+                    </div>
+                    <div
+                      className="input-num col-2"
+                      contentEditable={false}
+                      onKeyDown={(e) => handleKeyDown(e, index)}
+                      ref={(el) => (inputRefs.current[index] = el)}
+                      dangerouslySetInnerHTML={{ __html: values[index] }}
+                    />
                   </div>
                 ))}
               </Row>
@@ -176,14 +200,14 @@ const Home = () => {
               </button>
             </Row>
             <Row>
-                <button
-                  ref={submitRef}
-                  type="submit"
-                  className="view-chart"
-                  value="View Chart"
-                >
-                  View Chart
-                </button>
+              <button
+                ref={submitRef}
+                type="submit"
+                className="view-chart"
+                value="View Chart"
+              >
+                View Chart
+              </button>
             </Row>
           </form>
         </div>
