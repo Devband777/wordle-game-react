@@ -26,24 +26,40 @@
 }
 
 .food-item {
-    border: 3px solid #fff;
+    border: 4px solid #ddd;
     padding: 5px 10px;
     font-size: 24px;
+    height: 60px;
     font-weight: 600;
     text-transform: uppercase;
+    user-select: none;
+    text-shadow: 1px 1px 1px #0003;
 }
 .food-item div:hover {
     color:#dc2bff40;
 }
-.foods input {
-    border: 3px solid #fff;
-    padding: 5px 10px;
-    font-size: 24px;
-    font-weight: 600;
+.input-num {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 2rem;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    width: 60px;
+    height: 60px;
     color: #fff;
-    text-align: center;
-    background: none;
+    text-shadow: 1px 1px 1px #0003;
+    user-select: none;
 }
+
+.active {
+    
+    border: 5px solid #fff;
+}
+
 
 .loading {
     font-size: 120px;
@@ -62,7 +78,7 @@
     padding: 0 50px;
     font-size: 28px;
     height: 80px;
-    background: #3903fd2d;
+    background: #8D9EFF;
     border: 3px solid #fff;
     border-radius: 20px;
     color: #fff;
@@ -76,10 +92,22 @@
 .view-chart::selection {
     background-color: #00aef81f;
 }
-.keyboard button {
-width: 100px;
-height: 100px;
-background-color: black;
-color: white;
-font-size: 42px;
+.keyboard .keyboard-item {
+    background-color: #161a25;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 88px;
+    height: 98px;
+    border-radius: 4px;
+    border: 0;
+    font-weight: 700;
+    font-size: 2.4em;
+    color: #fff;
+    cursor: pointer;
+    user-select: none;
+}
+.keyboard .keyboard-item:disabled {
+    background: #413856;
+    color: #ccca;
 }

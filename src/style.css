@@ -1,17 +1,8 @@
+body,
 html {
-    --section-background-color: linear-gradient(
-      to bottom left,
-      rgb(5, 8, 40), rgb(1, 4, 39)
-    );
-  
-    --image-gradient: linear-gradient(
-      to bottom left,
-      rgba(5, 8, 40, 0.87), rgba(1, 4, 39, 0.925)
-    );
-  
-    --imp-text-color: #ff51c2;
-    --imp-bold-text-color: #ff51c2;
-  }
+	margin: 0;
+	padding: 0;
+}
   
   .yellow {
     color: var(--imp-bold-text-color) !important;
