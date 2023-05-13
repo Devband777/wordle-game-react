@@ -84,11 +84,19 @@
     color: #fff;
     text-decoration: none;
     margin: auto;
+    user-select: none;
 }
 .view-chart:hover {
     background-color: #ffffff1f;
     color: #fff;
 }
+.view-chart:disabled {
+    
+    background-color: #707071;
+    border: 3px solid #ddd;
+    color: #ccca;
+}
+
 .view-chart::selection {
     background-color: #00aef81f;
 }
