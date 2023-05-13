@@ -104,11 +104,11 @@ const Home = () => {
   return (
     <section>
       <Container fluid className="home-container">
-        <div className="col-md-8 col-xxl-6 col-xl-6 col-sm-12 col-xs-12 offset-xl-3 offset-md-2 offset-xxl-3">
+        <div className="col-md-6 col-xxl-4 col-xl-4 col-sm-12 col-xs-12 offset-xl-4 offset-md-3 offset-xxl-4">
           <form onSubmit={handleSubmit}>
             <Row className="header mb-5">
               <p>
-                Maazle <span className="green">Game</span>{" "}
+                Maazle <b className="green">Game</b>{" "}
                 <small className="gray">#438</small>
               </p>
               <h4>
@@ -122,20 +122,16 @@ const Home = () => {
                     className="d-flex flex-direction-row justify-content-between"
                     key={item}
                   >
-                    <Col xl={8} md={8} sm={8} xs={8}>
-                      <div className="food-item">
+                      <div className="food-item col-8">
                         {jsonData.items[item].title}
                       </div>
-                    </Col>
-                    <Col xl={2} md={2} sm={2} xs={2}>
                       <div
-                        className="input-num"
+                        className="input-num col-2"
                         contentEditable={false}
                         onKeyDown={(e) => handleKeyDown(e, index)}
                         ref={(el) => (inputRefs.current[index] = el)}
                         dangerouslySetInnerHTML={{ __html: values[index] }}
                       />
-                    </Col>
                   </div>
                 ))}
               </Row>
@@ -180,7 +176,6 @@ const Home = () => {
               </button>
             </Row>
             <Row>
-              <Col md={6} xl={6}>
                 <button
                   ref={submitRef}
                   type="submit"
@@ -189,7 +184,6 @@ const Home = () => {
                 >
                   View Chart
                 </button>
-              </Col>
             </Row>
           </form>
         </div>

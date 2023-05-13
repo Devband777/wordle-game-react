@@ -40,11 +40,6 @@ const MyChart = () => {
         textTransform: "uppercase",
       },
     },
-    
-    vAxis: {
-      slantedText: true,
-      slantedTextAngle: 90,
-    },
   };
 
   useEffect(() => {
@@ -61,11 +56,11 @@ const MyChart = () => {
       <Row>
         {chartData.length > 0 ? (
           <Chart
-            chartType="BarChart"
+            chartType="ColumnChart"
             data={chartData}
             options={options}
             width={"100%"}
-            height={"600px"}
+            height={"800px"}
           />
         ) : (
           <p className="loading">Loading...</p>
