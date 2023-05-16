@@ -95,16 +95,39 @@ const Home = () => {
       const newValue = values[index] || 0;
       updatedItems[item].rank = jsonData.items[item].rank + parseInt(newValue);
     });
-
-    Api.put(SelectedDataHttpURL, { ...jsonData, items: updatedItems })
-      .then((res) => console.log("Updated: ", res.data.record))
-      .catch((err) => console.log("Error: ", err));
-    navigate("/chart");
-
     const today = new Date().toISOString().substring(0, 10);
     localStorage.setItem("lastSubmitDate", today);
     setIsBtnClickable(false);
-    
+
+    Api.get(HttpURL)
+      .then((res) => {
+        // Get an array of topic values from the object
+        const currentData = Object.values(res.data.record);
+        const topicToUpdate = Object.keys(currentData).find(
+          (key) => currentData[key].title === jsonData.title
+        );
+        if (topicToUpdate) {
+          const updatedTopic = {
+            ...currentData[topicToUpdate],
+            items: jsonData.items,
+          };
+          const updatedJsonData = {
+            ...currentData,
+            [topicToUpdate]: updatedTopic,
+          };
+          Api.put(HttpURL, updatedJsonData)
+            .then((res) => {
+              navigate('/chart',
+                {state: { passData: jsonData }}
+              );
+              console.log("Updated: ", res.data.record)
+            })
+            .catch((err) => console.log("Error: ", err));
+        }
+      })
+      .catch((error) => console.log("Error saving data:", error));
+
+    // navigate("/chart");
   };
 
   useEffect(() => {
@@ -256,6 +279,7 @@ const Home = () => {
                 type="submit"
                 className="view-chart"
                 value="View Chart"
+                disabled={!isBtnClickable}
               >
                 View Chart
               </button>
