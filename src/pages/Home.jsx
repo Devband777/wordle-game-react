@@ -3,6 +3,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
 import { HttpURL, Api, SelectedDataHttpURL } from "../utils.js";
+import moment from "moment";
 
 const Home = () => {
   const [values, setValues] = useState([]);
@@ -11,6 +12,8 @@ const Home = () => {
   const [jsonData, setJsonData] = useState({ items: {} });
   const [keyboardIdx, setKeyboardIdx] = useState(0);
 
+  const [isBtnClickable, setIsBtnClickable] = useState(true);
+  const [count, setCount] = useState(90);
   const navigate = useNavigate();
 
   const getNumFromKeyCode = (keyCode) => {
@@ -18,7 +21,6 @@ const Home = () => {
       case 97:
       case 49:
         return 1;
-
       case 98:
       case 50:
         return 2;
@@ -75,15 +77,12 @@ const Home = () => {
     if (keyboardIdx === Object.keys(jsonData.items).length - 1) {
       submitRef.current.focus();
       inputRefs.current[keyboardIdx].classList.remove("active");
-      inputRefs.current[keyboardIdx].setAttribute("contentEditable", false);
       return;
     }
     const nextInput = inputRefs.current[keyboardIdx + 1];
     if (nextInput) {
-      inputRefs.current[keyboardIdx].setAttribute("contentEditable", false);
       inputRefs.current[keyboardIdx].classList.remove("active");
       nextInput.classList.add("active");
-      nextInput.setAttribute("contentEditable", true);
       nextInput.focus();
     }
     setKeyboardIdx(keyboardIdx + 1);
@@ -96,22 +95,65 @@ const Home = () => {
       const newValue = values[index] || 0;
       updatedItems[item].rank = jsonData.items[item].rank + parseInt(newValue);
     });
-    console.log(updatedItems);
+
     Api.put(SelectedDataHttpURL, { ...jsonData, items: updatedItems })
       .then((res) => console.log("Updated: ", res.data.record))
       .catch((err) => console.log("Error: ", err));
     navigate("/chart");
+
+    const today = new Date().toISOString().substring(0, 10);
+    localStorage.setItem("lastSubmitDate", today);
+    setIsBtnClickable(false);
+    
   };
+
+  useEffect(() => {
+    // Get today's date in ISO format without the time component
+    const today = new Date().toISOString().substring(0, 10);
+
+    // Get the stored date from local storage
+    const storedDate = localStorage.getItem("lastSubmitDate");
+
+    // Check if the stored date is equal to today's date
+    if (storedDate === today) {
+      console.log("oops", today);
+      setIsBtnClickable(false);
+    } else {
+      setIsBtnClickable(true);
+      // localStorage.setItem('lastSubmitDate', today);
+    }
+  }, []);
+
+  // Enable/disable the button based on whether it has been clicked today and whether we're within the 90-second window
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      const today = new Date().toISOString().substring(0, 10);
+      setIsBtnClickable(false);
+      localStorage.setItem("lastSubmitDate", today);
+    }, 90000);
+
+    return () => clearTimeout(timerId);
+  }, [isBtnClickable]);
+
+  useEffect(() => {
+    let timerId;
+    if (isBtnClickable) {
+      timerId = setInterval(() => {
+        if (count > 0) {
+          setCount((count) => count - 1);
+        }
+      }, 1000);
+    }
+    return () => clearInterval(timerId);
+  }, [isBtnClickable, count]); // add count as a dependency
 
   useEffect(() => {
     Api.get(HttpURL)
       .then((res) => {
         // Get an array of topic values from the object
         const topicValues = Object.values(res.data.record);
-
         // Get a random index in the array
         const randomIndex = Math.floor(Math.random() * topicValues.length);
-
         // Use the random index to get a random topic from the array
         const randomTopic = topicValues[randomIndex];
         setJsonData(randomTopic);
@@ -121,7 +163,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    inputRefs.current[0]?.setAttribute("contentEditable", true);
+    // inputRefs.current[0]?.setAttribute("contentEditable", true);
     inputRefs.current[0]?.classList.add("active");
   }, [jsonData]);
 
@@ -138,6 +180,10 @@ const Home = () => {
               <h4>
                 Today topic is <b className="yellow topic">{jsonData.title}</b>
               </h4>
+              <h1>
+                {count}
+                <span>s left</span>
+              </h1>
             </Row>
             {jsonData.items ? (
               <Row className="foods mb-5">
@@ -147,12 +193,12 @@ const Home = () => {
                     key={item}
                   >
                     <div className="food-item col-8">
-                      {jsonData.items[item].title}
+                      <p>{jsonData.items[item].title}</p>
                     </div>
                     <div
                       className="input-num col-2"
                       contentEditable={false}
-                      onKeyDown={(e) => handleKeyDown(e, index)}
+                      // onKeyDown={(e) => handleKeyDown(e, index)}
                       ref={(el) => (inputRefs.current[index] = el)}
                       dangerouslySetInnerHTML={{ __html: values[index] }}
                     />
@@ -167,6 +213,7 @@ const Home = () => {
                 className="keyboard-item"
                 onClick={(e) => handleKeyBoardPress(e)}
                 value={1}
+                disabled={!isBtnClickable}
               >
                 1
               </button>
@@ -174,6 +221,7 @@ const Home = () => {
                 className="keyboard-item"
                 onClick={(e) => handleKeyBoardPress(e)}
                 value={2}
+                disabled={!isBtnClickable}
               >
                 2
               </button>
@@ -181,6 +229,7 @@ const Home = () => {
                 className="keyboard-item"
                 onClick={(e) => handleKeyBoardPress(e)}
                 value={3}
+                disabled={!isBtnClickable}
               >
                 3
               </button>
@@ -188,6 +237,7 @@ const Home = () => {
                 className="keyboard-item"
                 onClick={(e) => handleKeyBoardPress(e)}
                 value={4}
+                disabled={!isBtnClickable}
               >
                 4
               </button>
@@ -195,6 +245,7 @@ const Home = () => {
                 className="keyboard-item"
                 onClick={(e) => handleKeyBoardPress(e)}
                 value={5}
+                disabled={!isBtnClickable}
               >
                 5
               </button>
