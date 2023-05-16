@@ -30,6 +30,7 @@ function App() {
       <div className="App" id={load ? "no-scroll" : "scroll"}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route exact path="/:topicTitle" element={<Home />} />
           <Route path="/chart" element={<MyChart />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

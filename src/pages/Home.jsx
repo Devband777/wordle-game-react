@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row } from "react-bootstrap";
 import "./style.css";
-import { useNavigate } from "react-router-dom";
-import { HttpURL, Api, SelectedDataHttpURL } from "../utils.js";
-import moment from "moment";
+import { useNavigate, useParams } from "react-router-dom";
+import { HttpURL, Api } from "../utils.js";
 
 const Home = () => {
   const [values, setValues] = useState([]);
@@ -15,6 +14,8 @@ const Home = () => {
   const [isBtnClickable, setIsBtnClickable] = useState(true);
   const [count, setCount] = useState(90);
   const navigate = useNavigate();
+
+  const { topicTitle } = useParams();
 
   const getNumFromKeyCode = (keyCode) => {
     switch (keyCode) {
@@ -117,10 +118,8 @@ const Home = () => {
           };
           Api.put(HttpURL, updatedJsonData)
             .then((res) => {
-              navigate('/chart',
-                {state: { passData: jsonData }}
-              );
-              console.log("Updated: ", res.data.record)
+              navigate("/chart", { state: { passData: jsonData } });
+              console.log("Updated: ", res.data.record);
             })
             .catch((err) => console.log("Error: ", err));
         }
@@ -175,11 +174,20 @@ const Home = () => {
       .then((res) => {
         // Get an array of topic values from the object
         const topicValues = Object.values(res.data.record);
-        // Get a random index in the array
-        const randomIndex = Math.floor(Math.random() * topicValues.length);
-        // Use the random index to get a random topic from the array
-        const randomTopic = topicValues[randomIndex];
-        setJsonData(randomTopic);
+
+        if (topicTitle) {
+          const getedTopic = Object.keys(topicValues).find(
+            (key) => topicValues[key].title === topicTitle
+          );
+          setJsonData(topicValues[getedTopic]);
+        } else {
+          // Get a random index in the array
+          const randomIndex = Math.floor(Math.random() * topicValues.length);
+          // Use the random index to get a random topic from the array
+          const randomTopic = topicValues[randomIndex];
+          setJsonData(randomTopic);
+        }
+
         console.log("Data fetched:", res.data.record);
       })
       .catch((error) => console.log("Error saving data:", error));
