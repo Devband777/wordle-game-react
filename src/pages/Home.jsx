@@ -211,10 +211,10 @@ const Home = () => {
               <h4>
                 Today topic is <b className="yellow topic">{jsonData.title}</b>
               </h4>
-              <h1>
+              {isBtnClickable ? <h1>
                 {count}
                 <span>s left</span>
-              </h1>
+              </h1> : <h2 style={{ color: '#FC7300', fontWeight: 600}}>Game over</h2>}
             </Row>
             {jsonData.items ? (
               <Row className="foods mb-5">

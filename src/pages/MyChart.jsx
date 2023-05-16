@@ -57,7 +57,7 @@ const MyChart = () => {
       scale: 25, // Set scale to 25x for full HD resolution (1920x1080)
       useCORS: true, // Enable CORS to allow screenshot of external images
     }).then((canvas) => {
-      canvas.toBlob((blob) => saveAs(blob, "download.png"));
+      canvas.toBlob((blob) => saveAs(blob, "chart.png"));
     });
   };
 
