@@ -13,6 +13,8 @@ const Home = () => {
 
   const [isBtnClickable, setIsBtnClickable] = useState(true);
   const [count, setCount] = useState(90);
+  const [visibleItems, setVisibleItems] = useState(1);
+
   const navigate = useNavigate();
 
   const { topicTitle } = useParams();
@@ -72,61 +74,18 @@ const Home = () => {
 
   const handleKeyBoardPress = (e) => {
     e.preventDefault();
+    const num = parseInt(e.target.value);
+
+    if (num == null || values.includes(num)) {
+      return;
+    }
+
+    setVisibleItems((prevVisibleItems) => prevVisibleItems + 1);
     setValues((prevValues) => [...prevValues, e.target.value]);
 
     e.target.setAttribute("disabled", true);
-    if (keyboardIdx === Object.keys(jsonData.items).length - 1) {
-      submitRef.current.focus();
-      inputRefs.current[keyboardIdx].classList.remove("active");
-      return;
-    }
-    const nextInput = inputRefs.current[keyboardIdx + 1];
-    if (nextInput) {
-      inputRefs.current[keyboardIdx].classList.remove("active");
-      nextInput.classList.add("active");
-      nextInput.focus();
-    }
+
     setKeyboardIdx(keyboardIdx + 1);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const updatedItems = jsonData.items;
-    Object.keys(jsonData.items).forEach((item, index) => {
-      const newValue = values[index] || 0;
-      updatedItems[item].rank = jsonData.items[item].rank + parseInt(newValue);
-    });
-    const today = new Date().toISOString().substring(0, 10);
-    localStorage.setItem("lastSubmitDate", today);
-    setIsBtnClickable(false);
-
-    Api.get(HttpURL)
-      .then((res) => {
-        // Get an array of topic values from the object
-        const currentData = Object.values(res.data.record);
-        const topicToUpdate = Object.keys(currentData).find(
-          (key) => currentData[key].title === jsonData.title
-        );
-        if (topicToUpdate) {
-          const updatedTopic = {
-            ...currentData[topicToUpdate],
-            items: jsonData.items,
-          };
-          const updatedJsonData = {
-            ...currentData,
-            [topicToUpdate]: updatedTopic,
-          };
-          Api.put(HttpURL, updatedJsonData)
-            .then((res) => {
-              navigate("/chart", { state: { passData: jsonData } });
-              console.log("Updated: ", res.data.record);
-            })
-            .catch((err) => console.log("Error: ", err));
-        }
-      })
-      .catch((error) => console.log("Error saving data:", error));
-
-    // navigate("/chart");
   };
 
   useEffect(() => {
@@ -194,31 +153,70 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    // inputRefs.current[0]?.setAttribute("contentEditable", true);
-    inputRefs.current[0]?.classList.add("active");
-  }, [jsonData]);
+    if (keyboardIdx === 5) {
+      const updatedItems = jsonData.items;
+      Object.keys(jsonData.items).forEach((item, index) => {
+        const newValue = values[index] || 0;
+        updatedItems[item].rank =
+          jsonData.items[item].rank + parseInt(newValue);
+      });
+      const today = new Date().toISOString().substring(0, 10);
+      localStorage.setItem("lastSubmitDate", today);
+      setIsBtnClickable(false);
 
+      Api.get(HttpURL)
+        .then((res) => {
+          // Get an array of topic values from the object
+          const currentData = Object.values(res.data.record);
+          const topicToUpdate = Object.keys(currentData).find(
+            (key) => currentData[key].title === jsonData.title
+          );
+          if (topicToUpdate) {
+            const updatedTopic = {
+              ...currentData[topicToUpdate],
+              items: jsonData.items,
+            };
+            const updatedJsonData = {
+              ...currentData,
+              [topicToUpdate]: updatedTopic,
+            };
+            Api.put(HttpURL, updatedJsonData)
+              .then((res) => {
+                navigate("/chart", { state: { passData: jsonData } });
+                console.log("Updated: ", res.data.record);
+              })
+              .catch((err) => console.log("Error: ", err));
+          }
+        })
+        .catch((error) => console.log("Error saving data:", error));
+    }
+  }, [keyboardIdx]);
   return (
     <section>
       <Container fluid className="home-container">
         <div className="col-md-6 col-xxl-4 col-xl-4 col-sm-12 col-xs-12 offset-xl-4 offset-md-3 offset-xxl-4">
-          <form onSubmit={handleSubmit}>
-            <Row className="header mb-5">
-              <p>
-                Maazle <b className="green">Game</b>{" "}
-                <small className="gray">#438</small>
-              </p>
-              <h4>
-                Today topic is <b className="yellow topic">{jsonData.title}</b>
-              </h4>
-              {isBtnClickable ? <h1>
+          <Row className="header mb-5">
+            <p>
+              Maazle <b className="green">Game</b>{" "}
+              <small className="gray">#438</small>
+            </p>
+            <h4>
+              Today topic is <b className="yellow topic">{jsonData.title}</b>
+            </h4>
+            {isBtnClickable ? (
+              <h1>
                 {count}
                 <span>s left</span>
-              </h1> : <h2 style={{ color: '#FC7300', fontWeight: 600}}>Game over</h2>}
-            </Row>
-            {jsonData.items ? (
-              <Row className="foods mb-5">
-                {Object.keys(jsonData.items).map((item, index) => (
+              </h1>
+            ) : (
+              <h2 style={{ color: "#FC7300", fontWeight: 600 }}>Game over</h2>
+            )}
+          </Row>
+          {jsonData.items ? (
+            <Row className="foods mb-5">
+              {Object.keys(jsonData.items)
+                .slice(0, visibleItems)
+                .map((item, index) => (
                   <div
                     className="d-flex flex-direction-row justify-content-between"
                     key={item}
@@ -235,64 +233,23 @@ const Home = () => {
                     />
                   </div>
                 ))}
-              </Row>
-            ) : (
-              <p className="loading">Loading...</p>
-            )}
-            <Row className="d-flex justify-content-evenly mb-5 keyboard">
-              <button
-                className="keyboard-item"
-                onClick={(e) => handleKeyBoardPress(e)}
-                value={1}
-                disabled={!isBtnClickable}
-              >
-                1
-              </button>
-              <button
-                className="keyboard-item"
-                onClick={(e) => handleKeyBoardPress(e)}
-                value={2}
-                disabled={!isBtnClickable}
-              >
-                2
-              </button>
-              <button
-                className="keyboard-item"
-                onClick={(e) => handleKeyBoardPress(e)}
-                value={3}
-                disabled={!isBtnClickable}
-              >
-                3
-              </button>
-              <button
-                className="keyboard-item"
-                onClick={(e) => handleKeyBoardPress(e)}
-                value={4}
-                disabled={!isBtnClickable}
-              >
-                4
-              </button>
-              <button
-                className="keyboard-item"
-                onClick={(e) => handleKeyBoardPress(e)}
-                value={5}
-                disabled={!isBtnClickable}
-              >
-                5
-              </button>
             </Row>
-            <Row>
+          ) : (
+            <p className="loading">Loading...</p>
+          )}
+          <Row className="d-flex justify-content-evenly mb-5 keyboard">
+            {[1, 2, 3, 4, 5].map((value) => (
               <button
-                ref={submitRef}
-                type="submit"
-                className="view-chart"
-                value="View Chart"
+                key={value}
+                className="keyboard-item"
+                onClick={handleKeyBoardPress}
+                value={value}
                 disabled={!isBtnClickable}
               >
-                View Chart
+                {value}
               </button>
-            </Row>
-          </form>
+            ))}
+          </Row>
         </div>
       </Container>
     </section>
