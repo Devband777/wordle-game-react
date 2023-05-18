@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import ShareButton from "react-social-share-buttons";
 import initialData from "../data.json";
-import  random, {Random}  from "random";
+import random, { Random } from "random";
 
 import "./style.css";
 
@@ -29,6 +29,7 @@ const Home = () => {
 
   const [isIntroModalShow, setIsIntroModalShow] = useState(true);
 
+  const [rankedItems, setRankedItems] = useState([]);
   const handleIntroStart = () => {
     setIsIntroModalShow(false);
   };
@@ -76,9 +77,9 @@ const Home = () => {
     if (storedDate === today) {
       setIsBtnClickable(false);
       setIsIntroModalShow(false);
-      setModalShow(true)
+      setModalShow(true);
     } else {
-      localStorage.removeItem('todayTopic')
+      localStorage.removeItem("todayTopic");
       setIsBtnClickable(true);
       setIsIntroModalShow(true);
     }
@@ -109,7 +110,7 @@ const Home = () => {
   }, [isBtnClickable, isIntroModalShow]); // add count as a dependency
 
   useEffect(() => {
-    const seed = new Date().getDate()
+    const seed = new Date().getDate();
     if (topicTitleParam) {
       setTodayTopicData({
         ...todayTopicData,
@@ -122,9 +123,10 @@ const Home = () => {
         setTodayTopicData(localTopic);
       } else {
         const today = new Date();
-        const randomKey = parseInt(today.getMonth()) + parseInt(today.getDate())
-        const topics = Object.keys(initialData); 
-        const randomTopic =  topics[randomKey%topics.length]
+        const randomKey =
+          parseInt(today.getMonth()) + parseInt(today.getDate());
+        const topics = Object.keys(initialData);
+        const randomTopic = topics[randomKey % topics.length];
         const randomItems = getRandomRecords(initialData[randomTopic], 5, seed);
         const todayTopicData = {
           topic: randomTopic,
@@ -139,14 +141,18 @@ const Home = () => {
 
   useEffect(() => {
     if (keyboardIdx === 5) {
-
-      // const temp = todayTopicData.items;
-
+      const temp = todayTopicData;
+      todayTopicData.items.sort(
+        (a, b) =>
+          todayTopicData.values[todayTopicData.items.indexOf(a)] -
+          todayTopicData.values[todayTopicData.items.indexOf(b)]
+      );
+      todayTopicData.values.sort((a, b) => a - b);
       // setRankedItems(
-      //   temp.sort(
+      //   temp.items.sort(
       //     (a, b) =>
-      //       todayTopicData.values[todayTopicData.items.indexOf(a)] -
-      //       todayTopicData.values[todayTopicData.items.indexOf(b)]
+      //       temp.values[temp.items.indexOf(a)] -
+      //       temp.values[temp.items.indexOf(b)]
       //   )
       // );
 
@@ -162,7 +168,7 @@ const Home = () => {
         localStorage.setItem("maxStreak", 1);
       }
 
-        localStorage.setItem("todayTopic", JSON.stringify(todayTopicData));
+      localStorage.setItem("todayTopic", JSON.stringify(todayTopicData));
     }
   }, [keyboardIdx]);
 
@@ -189,46 +195,47 @@ const Home = () => {
           </Row>
           {todayTopicData.items ? (
             <Row className="foods mb-3">
-              {isBtnClickable ? Object.keys(todayTopicData.items)
-                .slice(0, visibleItems)
-                .map((item, index) => (
-                  <div
-                    className="d-flex flex-direction-row justify-content-between"
-                    key={item}
-                  >
-                    <div className="food-item col-8">
-                      <p>{todayTopicData.items[item]}</p>
-                    </div>
+              {isBtnClickable
+                ? Object.keys(todayTopicData.items)
+                    .slice(0, visibleItems)
+                    .map((item, index) => (
+                      <div
+                        className="d-flex flex-direction-row justify-content-between"
+                        key={item}
+                      >
+                        <div className="food-item col-8">
+                          <p>{todayTopicData.items[item]}</p>
+                        </div>
+                        <div
+                          className="input-num col-2"
+                          contentEditable={false}
+                          // onKeyDown={(e) => handleKeyDown(e, index)}
+                          ref={(el) => (inputRefs.current[index] = el)}
+                          dangerouslySetInnerHTML={{
+                            __html: todayTopicData.values[index],
+                          }}
+                        />
+                      </div>
+                    ))
+                : Object.keys(todayTopicData.items).map((item, index) => (
                     <div
-                      className="input-num col-2"
-                      contentEditable={false}
-                      // onKeyDown={(e) => handleKeyDown(e, index)}
-                      ref={(el) => (inputRefs.current[index] = el)}
-                      dangerouslySetInnerHTML={{
-                        __html: todayTopicData.values[index],
-                      }}
-                    />
-                  </div>
-                )) : Object.keys(todayTopicData.items)
-                .map((item, index) => (
-                  <div
-                    className="d-flex flex-direction-row justify-content-between"
-                    key={item}
-                  >
-                    <div className="food-item col-8">
-                      <p>{todayTopicData.items[item]}</p>
+                      className="d-flex flex-direction-row justify-content-between"
+                      key={item}
+                    >
+                      <div className="food-item col-8">
+                        <p>{todayTopicData.items[item]}</p>
+                      </div>
+                      <div
+                        className="input-num col-2"
+                        contentEditable={false}
+                        // onKeyDown={(e) => handleKeyDown(e, index)}
+                        ref={(el) => (inputRefs.current[index] = el)}
+                        dangerouslySetInnerHTML={{
+                          __html: todayTopicData.values[index],
+                        }}
+                      />
                     </div>
-                    <div
-                      className="input-num col-2"
-                      contentEditable={false}
-                      // onKeyDown={(e) => handleKeyDown(e, index)}
-                      ref={(el) => (inputRefs.current[index] = el)}
-                      dangerouslySetInnerHTML={{
-                        __html: todayTopicData.values[index],
-                      }}
-                    />
-                  </div>
-                ))}
+                  ))}
             </Row>
           ) : (
             <p className="loading">Loading...</p>
@@ -291,7 +298,7 @@ const Home = () => {
                   <span
                     className={`badge rounded-pill text-bg-${colors[index]}`}
                   >
-                    {todayTopicData.values[index]}
+                    {6 - todayTopicData.values[index]}
                   </span>
                 </li>
               ))}
