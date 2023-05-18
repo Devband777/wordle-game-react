@@ -28,8 +28,12 @@ const Home = () => {
   const colors = ["primary", "success", "danger", "warning", "info"];
 
   const [isIntroModalShow, setIsIntroModalShow] = useState(true);
-
-  const [rankedItems, setRankedItems] = useState([]);
+  const [resultData, setResultData] = useState({
+    topic: "",
+    items: [],
+    values: [],
+  });
+  // const [resultData, setResultData] = useState([]);
   const handleIntroStart = () => {
     setIsIntroModalShow(false);
   };
@@ -78,6 +82,7 @@ const Home = () => {
       setIsBtnClickable(false);
       setIsIntroModalShow(false);
       setModalShow(true);
+      setResultData(JSON.parse(localStorage.getItem("resultData")));
     } else {
       localStorage.removeItem("todayTopic");
       setIsBtnClickable(true);
@@ -141,21 +146,16 @@ const Home = () => {
 
   useEffect(() => {
     if (keyboardIdx === 5) {
-      const temp = todayTopicData;
-      todayTopicData.items.sort(
+      localStorage.setItem("todayTopic", JSON.stringify(todayTopicData));
+      const resultData = todayTopicData;
+      resultData.items.sort(
         (a, b) =>
-          todayTopicData.values[todayTopicData.items.indexOf(a)] -
-          todayTopicData.values[todayTopicData.items.indexOf(b)]
+          resultData.values[resultData.items.indexOf(a)] -
+          resultData.values[resultData.items.indexOf(b)]
       );
-      todayTopicData.values.sort((a, b) => a - b);
-      // setRankedItems(
-      //   temp.items.sort(
-      //     (a, b) =>
-      //       temp.values[temp.items.indexOf(a)] -
-      //       temp.values[temp.items.indexOf(b)]
-      //   )
-      // );
-
+      resultData.values.sort((a, b) => a - b);
+      setResultData(resultData);
+      localStorage.setItem("resultData", JSON.stringify(resultData));
       const today = new Date().toISOString().substring(0, 10);
       localStorage.setItem("lastSubmitDate", today);
       setIsBtnClickable(false);
@@ -167,8 +167,6 @@ const Home = () => {
       } else {
         localStorage.setItem("maxStreak", 1);
       }
-
-      localStorage.setItem("todayTopic", JSON.stringify(todayTopicData));
     }
   }, [keyboardIdx]);
 
@@ -193,7 +191,7 @@ const Home = () => {
               <h2 style={{ color: "#FC7300", fontWeight: 600 }}>Game over</h2>
             )}
           </Row>
-          {todayTopicData.items ? (
+          {todayTopicData.values ? (
             <Row className="foods mb-3">
               {isBtnClickable
                 ? Object.keys(todayTopicData.items)
@@ -217,13 +215,13 @@ const Home = () => {
                         />
                       </div>
                     ))
-                : Object.keys(todayTopicData.items).map((item, index) => (
+                : Object.keys(JSON.parse(localStorage.getItem("todayTopic")).items).map((item, index) => (
                     <div
                       className="d-flex flex-direction-row justify-content-between"
                       key={item}
                     >
                       <div className="food-item col-8">
-                        <p>{todayTopicData.items[item]}</p>
+                        <p>{JSON.parse(localStorage.getItem("todayTopic")).items[item]}</p>
                       </div>
                       <div
                         className="input-num col-2"
@@ -231,7 +229,7 @@ const Home = () => {
                         // onKeyDown={(e) => handleKeyDown(e, index)}
                         ref={(el) => (inputRefs.current[index] = el)}
                         dangerouslySetInnerHTML={{
-                          __html: todayTopicData.values[index],
+                          __html: JSON.parse(localStorage.getItem("todayTopic")).values[index],
                         }}
                       />
                     </div>
@@ -280,45 +278,49 @@ const Home = () => {
               </div>
             </div>
             <h2>I have just completed Blindly</h2>
-            <h4>Topic: {todayTopicData.topic}</h4>
-            <h4>In {(30 - count).toFixed(1)} seconds</h4>
-            <ol
-              className="col-xl-6 offset-xl-3 col-md-8 offset-md-2 col-sm-12"
-              style={{
-                textAlign: "justify",
-                margin: "auto",
-                fontSize: 22,
-                wordBreak: "break-all",
-                marginBottom: 20,
-              }}
-            >
-              {todayTopicData.items.map((item, index) => (
-                <li key={index}>
-                  {item}{" "}
-                  <span
-                    className={`badge rounded-pill text-bg-${colors[index]}`}
-                  >
-                    {6 - todayTopicData.values[index]}
-                  </span>
-                </li>
-              ))}
-            </ol>
-            <div className="col-4 offset-4">
-              <ShareButton
-                compact
-                socialMedia={"twitter"}
-                url={"https://maaz-net.netlify.app"}
-                text={
-                  "I have jsust completed Blindly" +
-                  "Topic:" +
-                  todayTopicData.topic +
-                  "In " +
-                  (30 - count).toFixed(1) +
-                  " second"
-                }
-                hashtags={"Blindlee"}
-              />
-            </div>
+            {localStorage.getItem("resultData") && (
+              <>
+                <h4>Topic: {resultData.topic}</h4>
+                <h4>In {(30 - count).toFixed(1)} seconds</h4>
+                <ol
+                  className="col-xl-6 offset-xl-3 col-md-8 offset-md-2 col-sm-12"
+                  style={{
+                    textAlign: "justify",
+                    margin: "auto",
+                    fontSize: 22,
+                    wordBreak: "break-all",
+                    marginBottom: 20,
+                  }}
+                >
+                  {resultData.items.map((item, index) => (
+                    <li key={index}>
+                      {item}{" "}
+                      <span
+                        className={`badge rounded-pill text-bg-${colors[index]}`}
+                      >
+                        {6 - resultData.values[index]}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+                <div className="col-4 offset-4">
+                  <ShareButton
+                    compact
+                    socialMedia={"twitter"}
+                    url={"https://maaz-net.netlify.app"}
+                    text={
+                      "I have jsust completed Blindly" +
+                      "Topic:" +
+                      todayTopicData.topic +
+                      "In " +
+                      (30 - count).toFixed(1) +
+                      " second"
+                    }
+                    hashtags={"Blindlee"}
+                  />
+                </div>
+              </>
+            )}
           </Modal.Body>
         </Modal>
 
@@ -330,7 +332,10 @@ const Home = () => {
           className="introduction"
         >
           <Modal.Body>
-            <h1 style={{ fontSize: "300%", margin: "20px" }}>Welcome!</h1>
+            <div className="mb-4">
+              <h1 style={{ fontSize: "300%", margin: "20px" }}>Welcome!</h1>
+              <h4>Topic: {todayTopicData.topic}</h4>
+            </div>
             <Button
               onClick={handleIntroStart}
               style={{
