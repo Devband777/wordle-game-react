@@ -37,8 +37,9 @@ const Home = () => {
   const handleIntroStart = () => {
     setIsIntroModalShow(false);
   };
-
   const handleClose = () => setModalShow(false);
+
+  const emojie = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣']
 
   //get the radom records from array
   const getRandomRecords = (arr, num, seed) => {
@@ -215,13 +216,20 @@ const Home = () => {
                         />
                       </div>
                     ))
-                : Object.keys(JSON.parse(localStorage.getItem("todayTopic")).items).map((item, index) => (
+                : Object.keys(
+                    JSON.parse(localStorage.getItem("todayTopic")).items
+                  ).map((item, index) => (
                     <div
                       className="d-flex flex-direction-row justify-content-between"
                       key={item}
                     >
                       <div className="food-item col-8">
-                        <p>{JSON.parse(localStorage.getItem("todayTopic")).items[item]}</p>
+                        <p>
+                          {
+                            JSON.parse(localStorage.getItem("todayTopic"))
+                              .items[item]
+                          }
+                        </p>
                       </div>
                       <div
                         className="input-num col-2"
@@ -229,7 +237,8 @@ const Home = () => {
                         // onKeyDown={(e) => handleKeyDown(e, index)}
                         ref={(el) => (inputRefs.current[index] = el)}
                         dangerouslySetInnerHTML={{
-                          __html: JSON.parse(localStorage.getItem("todayTopic")).values[index],
+                          __html: JSON.parse(localStorage.getItem("todayTopic"))
+                            .values[index],
                         }}
                       />
                     </div>
@@ -296,9 +305,9 @@ const Home = () => {
                     <li key={index}>
                       {item}{" "}
                       <span
-                        className={`badge rounded-pill text-bg-${colors[index]}`}
+                        
                       >
-                        {6 - resultData.values[index]}
+                        {emojie[6 - resultData.values[index]-1]}
                       </span>
                     </li>
                   ))}
@@ -308,15 +317,11 @@ const Home = () => {
                     compact
                     socialMedia={"twitter"}
                     url={"https://maaz-net.netlify.app"}
-                    text={
-                      "I have jsust completed Blindly" +
-                      "Topic:" +
-                      todayTopicData.topic +
-                      "In " +
-                      (30 - count).toFixed(1) +
-                      " second"
-                    }
-                    hashtags={"Blindlee"}
+                    text={`I have jsust completed Blindly.%0aTopic: ${
+                      todayTopicData.topic
+                    }%0aIn ${(30 - count).toFixed(1)}seconds%0a${resultData.items
+                      .map((item, index) => `${index + 1}. ${item} ${emojie[5-index-1]}%0a`)
+                      .join("")}`}
                   />
                 </div>
               </>
