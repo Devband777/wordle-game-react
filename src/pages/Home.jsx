@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Container, Row } from "react-bootstrap";
-import "./style.css";
 import { useParams } from "react-router-dom";
-import { HttpURL, Api } from "../utils.js";
 import { Modal, Button } from "react-bootstrap";
 import ShareButton from "react-social-share-buttons";
 import initialData from "../data.json";
+import  {Random}  from "random";
+
+import "./style.css";
 
 const Home = () => {
   const inputRefs = useRef([]);
@@ -23,17 +24,27 @@ const Home = () => {
   const { topicTitleParam } = useParams();
 
   const [modalShow, setModalShow] = useState(false);
+
+  const colors = ["primary", "success", "danger", "warning", "info"];
+
+  const [isIntroModalShow, setIsIntroModalShow] = useState(true);
+
+  const handleIntroStart = () => {
+    setIsIntroModalShow(false);
+  };
+
   const handleClose = () => setModalShow(false);
 
   //get the radom records from array
-  const getRandomRecords = (arr, num) => {
-    const result = [];
-    for (let i = 0; i < num; i++) {
-      const randomIndex = Math.floor(Math.random() * arr.length);
-      result.push(arr[randomIndex]);
-      arr.splice(randomIndex, 1);
+  const getRandomRecords = (arr, num, seed) => {
+    const random = new Random(seed); // initialize the Random module with the seed
+    const shuffled = [...arr]; // make a copy of the original array
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      // perform Fisher-Yates Shuffle algorithm
+      const j = Math.floor(random.float() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return result;
+    return shuffled.slice(0, num);
   };
 
   const handleKeyBoardPress = (e) => {
@@ -62,8 +73,6 @@ const Home = () => {
     setKeyboardIdx(keyboardIdx + 1);
   };
 
-
-  const [rankedItems, setRankedItems] = useState([]);
   //confrom today
   useEffect(() => {
     // Get today's date in ISO format without the time component
@@ -76,28 +85,28 @@ const Home = () => {
     if (storedDate === today) {
       console.log("oops", today);
       setIsBtnClickable(false);
+      setIsIntroModalShow(false);
     } else {
       setIsBtnClickable(true);
-      // localStorage.setItem('lastSubmitDate', today);
+      setIsIntroModalShow(true);
     }
   }, []);
 
   // Enable/disable the button based on whether it has been clicked today and whether we're within the 90-second window
   useEffect(() => {
-    const timerId = setTimeout(() => {
-      const today = new Date().toISOString().substring(0, 10);
-      setIsBtnClickable(false);
-      localStorage.setItem("lastSubmitDate", today);
-    }, 90000);
-
-    return () => clearTimeout(timerId);
-  }, [isBtnClickable]);
+    if (!isIntroModalShow && isBtnClickable) {
+      const timerId = setTimeout(() => {
+        const today = new Date().toISOString().substring(0, 10);
+        setIsBtnClickable(false);
+        localStorage.setItem("lastSubmitDate", today);
+      }, 90000);
+      return () => clearTimeout(timerId);
+    }
+  }, [isIntroModalShow, isBtnClickable]);
 
   useEffect(() => {
     let timerId;
-    if (isBtnClickable) {
-      let time = 0;
-
+    if (!isIntroModalShow && isBtnClickable) {
       timerId = setInterval(() => {
         if (count > 0) {
           setCount((count) => count - 0.1);
@@ -105,51 +114,65 @@ const Home = () => {
       }, 100);
     }
     return () => clearInterval(timerId);
-  }, [count]); // add count as a dependency
+  }, [isBtnClickable, isIntroModalShow]); // add count as a dependency
 
   useEffect(() => {
-
+    const seed = new Date().getDate()
     if (topicTitleParam) {
-          setTodayTopicData({
-            ...todayTopicData,
-            topic: topicTitleParam,
-            items: getRandomRecords(initialData[topicTitleParam], 5),
-          });
-        } else {
-          const topics = Object.keys(initialData);
-          const randomTopic = topics[Math.floor(Math.random() * topics.length)];
-          setTodayTopicData({
-            ...todayTopicData,
-            topic: randomTopic,
-            items: getRandomRecords(initialData[randomTopic], 5),
-          });
-        }
-    
-    // return () => Api.get(HttpURL)
-    //   .then((res) => {
-        
-
-    //     console.log("Data fetched:", initialData);
-    //   })
-    //   .catch((error) => console.log("Error saving data:", error));
+      setTodayTopicData({
+        ...todayTopicData,
+        topic: topicTitleParam,
+        items: getRandomRecords(initialData[topicTitleParam], 5, seed),
+      });
+    } else {
+      const localTopic = JSON.parse(localStorage.getItem("todayTopic"));
+      if (localTopic) {
+        setTodayTopicData(localTopic);
+        console.log(todayTopicData);
+      } else {
+        const today = new Date();
+        const randomKey = parseInt(today.getMonth()) + parseInt(today.getDate())
+        const topics = Object.keys(initialData);        
+        // const randomTopic =  getRandomRecords(topics, 1, seed);
+        console.log(randomKey)
+        const randomTopic =  topics[randomKey%topics.length]
+        const randomItems = getRandomRecords(initialData[randomTopic], 5, seed);
+        const todayTopic = {
+          topic: randomTopic,
+          items: randomItems,
+          values: [],
+        };
+        setTodayTopicData(todayTopic);
+        localStorage.setItem("todayTopic", JSON.stringify(todayTopic));
+      }
+    }
   }, []);
 
   useEffect(() => {
     if (keyboardIdx === 5) {
       console.log(todayTopicData);
 
-      const temp = todayTopicData.items;
+      // const temp = todayTopicData.items;
 
-      setRankedItems(temp.sort(
-        (a, b) =>
-          todayTopicData.values[todayTopicData.items.indexOf(a)] -
-          todayTopicData.values[todayTopicData.items.indexOf(b)]
-      ));
+      // setRankedItems(
+      //   temp.sort(
+      //     (a, b) =>
+      //       todayTopicData.values[todayTopicData.items.indexOf(a)] -
+      //       todayTopicData.values[todayTopicData.items.indexOf(b)]
+      //   )
+      // );
 
       const today = new Date().toISOString().substring(0, 10);
       localStorage.setItem("lastSubmitDate", today);
-      setIsBtnClickable(false); 
+      setIsBtnClickable(false);
       setModalShow(true);
+
+      const streak = localStorage.getItem("maxStreak");
+      if (streak) {
+        localStorage.setItem("maxStreak", parseInt(streak) + 1);
+      } else {
+        localStorage.setItem("maxStreak", 1);
+      }
     }
   }, [keyboardIdx]);
 
@@ -231,9 +254,19 @@ const Home = () => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <h2>I have jsust completed Blindly</h2>
+            <div className="col-8 offset-2 d-flex flex-row justify-content-around mb-3">
+              <div>
+                <p>Current streak</p>
+                <h3>1</h3>
+              </div>
+              <div>
+                <p>Max streak</p>
+                <h3>{localStorage.getItem("maxStreak")}</h3>
+              </div>
+            </div>
+            <h2>I have just completed Blindly</h2>
             <h4>Topic: {todayTopicData.topic}</h4>
-            <h4>In {(90 - count).toFixed(1)} second</h4>
+            <h4>In {(90 - count).toFixed(1)} seconds</h4>
             <ol
               className="col-xl-6 offset-xl-3 col-md-8 offset-md-2 col-sm-12"
               style={{
@@ -244,17 +277,55 @@ const Home = () => {
                 marginBottom: 20,
               }}
             >
-              {rankedItems.map((item) => <li>{item}</li>)}
+              {todayTopicData.items.map((item, index) => (
+                <li key={index}>
+                  {item}{" "}
+                  <span
+                    className={`badge rounded-pill text-bg-${colors[index]}`}
+                  >
+                    {todayTopicData.values[index]}
+                  </span>
+                </li>
+              ))}
             </ol>
             <div className="col-4 offset-4">
               <ShareButton
                 compact
                 socialMedia={"twitter"}
                 url={"https://maaz-net.netlify.app"}
-                text={"I have jsust completed Blindly" + "Topic:" + todayTopicData.topic + "In " + (90 - count).toFixed(1) + " second"}
+                text={
+                  "I have jsust completed Blindly" +
+                  "Topic:" +
+                  todayTopicData.topic +
+                  "In " +
+                  (90 - count).toFixed(1) +
+                  " second"
+                }
                 hashtags={"Blindlee"}
               />
             </div>
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          show={isIntroModalShow}
+          onHide={handleIntroStart}
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+          className="introduction"
+        >
+          <Modal.Body>
+            <h1 style={{ fontSize: "300%", margin: "20px" }}>Welcome!</h1>
+            <Button
+              onClick={handleIntroStart}
+              style={{
+                fontSize: "150%",
+                padding: "10px 50px",
+                marginBottom: "20px",
+              }}
+            >
+              Start
+            </Button>
           </Modal.Body>
         </Modal>
       </Container>
