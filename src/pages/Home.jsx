@@ -18,7 +18,7 @@ const Home = () => {
   const [keyboardIdx, setKeyboardIdx] = useState(0);
 
   const [isBtnClickable, setIsBtnClickable] = useState(true);
-  const [count, setCount] = useState(90.0);
+  const [count, setCount] = useState(30.0);
   const [visibleItems, setVisibleItems] = useState(1);
 
   const { topicTitleParam } = useParams();
@@ -57,8 +57,6 @@ const Home = () => {
       values: [...prevData.values, newValue],
     }));
 
-    console.log(todayTopicData);
-
     e.target.setAttribute("disabled", true);
 
     setKeyboardIdx(keyboardIdx + 1);
@@ -71,7 +69,6 @@ const Home = () => {
   useEffect(() => {
     // Get today's date in ISO format without the time component
     const today = new Date().toISOString().substring(0, 10);
-    console.log(today)
     // Get the stored date from local storage
     const storedDate = localStorage.getItem("lastSubmitDate");
 
@@ -87,14 +84,14 @@ const Home = () => {
     }
   }, []);
 
-  // Enable/disable the button based on whether it has been clicked today and whether we're within the 90-second window
+  // Enable/disable the button based on whether it has been clicked today and whether we're within the 30-second window
   useEffect(() => {
     if (!isIntroModalShow && isBtnClickable) {
       const timerId = setTimeout(() => {
         const today = new Date().toISOString().substring(0, 10);
         setIsBtnClickable(false);
         localStorage.setItem("lastSubmitDate", today);
-      }, 90000);
+      }, 30000);
       return () => clearTimeout(timerId);
     }
   }, [isIntroModalShow, isBtnClickable]);
@@ -123,13 +120,10 @@ const Home = () => {
       const localTopic = JSON.parse(localStorage.getItem("todayTopic"));
       if (localTopic) {
         setTodayTopicData(localTopic);
-        console.log(todayTopicData);
       } else {
         const today = new Date();
         const randomKey = parseInt(today.getMonth()) + parseInt(today.getDate())
-        const topics = Object.keys(initialData);        
-        // const randomTopic =  getRandomRecords(topics, 1, seed);
-        console.log(randomKey)
+        const topics = Object.keys(initialData); 
         const randomTopic =  topics[randomKey%topics.length]
         const randomItems = getRandomRecords(initialData[randomTopic], 5, seed);
         const todayTopicData = {
@@ -145,7 +139,6 @@ const Home = () => {
 
   useEffect(() => {
     if (keyboardIdx === 5) {
-      console.log(todayTopicData);
 
       // const temp = todayTopicData.items;
 
@@ -170,8 +163,6 @@ const Home = () => {
       }
 
         localStorage.setItem("todayTopic", JSON.stringify(todayTopicData));
-
-      console.log(todayTopicData)
     }
   }, [keyboardIdx]);
 
@@ -283,7 +274,7 @@ const Home = () => {
             </div>
             <h2>I have just completed Blindly</h2>
             <h4>Topic: {todayTopicData.topic}</h4>
-            <h4>In {(90 - count).toFixed(1)} seconds</h4>
+            <h4>In {(30 - count).toFixed(1)} seconds</h4>
             <ol
               className="col-xl-6 offset-xl-3 col-md-8 offset-md-2 col-sm-12"
               style={{
@@ -315,7 +306,7 @@ const Home = () => {
                   "Topic:" +
                   todayTopicData.topic +
                   "In " +
-                  (90 - count).toFixed(1) +
+                  (30 - count).toFixed(1) +
                   " second"
                 }
                 hashtags={"Blindlee"}
