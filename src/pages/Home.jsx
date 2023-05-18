@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import ShareButton from "react-social-share-buttons";
 import initialData from "../data.json";
-import  {Random}  from "random";
+import  random, {Random}  from "random";
 
 import "./style.css";
 
@@ -37,14 +37,8 @@ const Home = () => {
 
   //get the radom records from array
   const getRandomRecords = (arr, num, seed) => {
-    const random = new Random(seed); // initialize the Random module with the seed
-    const shuffled = [...arr]; // make a copy of the original array
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      // perform Fisher-Yates Shuffle algorithm
-      const j = Math.floor(random.float() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled.slice(0, num);
+    const randomItems = arr.sort(() => seed - Math.random()).slice(0, num);
+    return randomItems;
   };
 
   const handleKeyBoardPress = (e) => {
@@ -77,16 +71,17 @@ const Home = () => {
   useEffect(() => {
     // Get today's date in ISO format without the time component
     const today = new Date().toISOString().substring(0, 10);
-
+    console.log(today)
     // Get the stored date from local storage
     const storedDate = localStorage.getItem("lastSubmitDate");
 
     // Check if the stored date is equal to today's date
     if (storedDate === today) {
-      console.log("oops", today);
       setIsBtnClickable(false);
       setIsIntroModalShow(false);
+      setModalShow(true)
     } else {
+      localStorage.removeItem('todayTopic')
       setIsBtnClickable(true);
       setIsIntroModalShow(true);
     }
@@ -137,13 +132,13 @@ const Home = () => {
         console.log(randomKey)
         const randomTopic =  topics[randomKey%topics.length]
         const randomItems = getRandomRecords(initialData[randomTopic], 5, seed);
-        const todayTopic = {
+        const todayTopicData = {
           topic: randomTopic,
           items: randomItems,
           values: [],
         };
-        setTodayTopicData(todayTopic);
-        localStorage.setItem("todayTopic", JSON.stringify(todayTopic));
+        setTodayTopicData(todayTopicData);
+        localStorage.setItem("todayTopic", JSON.stringify(todayTopicData));
       }
     }
   }, []);
@@ -173,6 +168,10 @@ const Home = () => {
       } else {
         localStorage.setItem("maxStreak", 1);
       }
+
+        localStorage.setItem("todayTopic", JSON.stringify(todayTopicData));
+
+      console.log(todayTopicData)
     }
   }, [keyboardIdx]);
 
@@ -182,8 +181,7 @@ const Home = () => {
         <div className="col-md-6 col-xxl-4 col-xl-4 col-sm-12 col-xs-12 offset-xl-4 offset-md-3 offset-xxl-4">
           <Row className="header mb-3">
             <p>
-              Maazle <b className="green">Game</b>{" "}
-              <small className="gray">#438</small>
+              Maazle <b className="green">Game</b>
             </p>
             <h4>
               Today topic is{" "}
@@ -200,8 +198,27 @@ const Home = () => {
           </Row>
           {todayTopicData.items ? (
             <Row className="foods mb-3">
-              {Object.keys(todayTopicData.items)
+              {isBtnClickable ? Object.keys(todayTopicData.items)
                 .slice(0, visibleItems)
+                .map((item, index) => (
+                  <div
+                    className="d-flex flex-direction-row justify-content-between"
+                    key={item}
+                  >
+                    <div className="food-item col-8">
+                      <p>{todayTopicData.items[item]}</p>
+                    </div>
+                    <div
+                      className="input-num col-2"
+                      contentEditable={false}
+                      // onKeyDown={(e) => handleKeyDown(e, index)}
+                      ref={(el) => (inputRefs.current[index] = el)}
+                      dangerouslySetInnerHTML={{
+                        __html: todayTopicData.values[index],
+                      }}
+                    />
+                  </div>
+                )) : Object.keys(todayTopicData.items)
                 .map((item, index) => (
                   <div
                     className="d-flex flex-direction-row justify-content-between"
