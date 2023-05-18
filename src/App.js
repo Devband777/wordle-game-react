@@ -9,7 +9,6 @@ import {
 import Home from "./pages/Home";
 
 import "./App.css";
-import "./style.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
