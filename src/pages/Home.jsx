@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import ShareButton from "react-social-share-buttons";
 import initialData from "../data.json";
-import random, { Random } from "random";
 
 import "./style.css";
 
@@ -24,8 +23,6 @@ const Home = () => {
   const { topicTitleParam } = useParams();
 
   const [modalShow, setModalShow] = useState(false);
-
-  const colors = ["primary", "success", "danger", "warning", "info"];
 
   const [isIntroModalShow, setIsIntroModalShow] = useState(true);
   const [resultData, setResultData] = useState({
@@ -332,7 +329,7 @@ const Home = () => {
                     )}seconds%0a${resultData.items
                       .map(
                         (item, index) =>
-                          `${index + 1}. ${item} ${emojie[5 - index - 1]}%0a`
+                          `${index + 1}. ${item} ${emojie[JSON.parse(localStorage.getItem("todayTopic")).items.indexOf(item)]}%0a`
                       )
                       .join("")}`}
                   />
