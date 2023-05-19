@@ -39,7 +39,7 @@ const Home = () => {
   };
   const handleClose = () => setModalShow(false);
 
-  const emojie = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣']
+  const emojie = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"];
 
   //get the radom records from array
   const getRandomRecords = (arr, num, seed) => {
@@ -149,6 +149,16 @@ const Home = () => {
     if (keyboardIdx === 5) {
       localStorage.setItem("todayTopic", JSON.stringify(todayTopicData));
       const resultData = todayTopicData;
+      // resultData.items.map((item, index) => {
+      //   setResultData((prevData) => ({
+      //     ...prevData,
+      //     originalOrder: [...prevData.origianlOrder, index],
+      //   }));
+      // });
+      // // setTodayTopicData((prevData) => ({
+      // //   ...prevData,
+      // //   values: [...prevData.values, newValue],
+      // // }));
       resultData.items.sort(
         (a, b) =>
           resultData.values[resultData.items.indexOf(a)] -
@@ -156,6 +166,8 @@ const Home = () => {
       );
       resultData.values.sort((a, b) => a - b);
       setResultData(resultData);
+      console.log(resultData);
+
       localStorage.setItem("resultData", JSON.stringify(resultData));
       const today = new Date().toISOString().substring(0, 10);
       localStorage.setItem("lastSubmitDate", today);
@@ -304,11 +316,7 @@ const Home = () => {
                   {resultData.items.map((item, index) => (
                     <li key={index}>
                       {item}{" "}
-                      <span
-                        
-                      >
-                        {emojie[6 - resultData.values[index]-1]}
-                      </span>
+                      <span>{emojie[JSON.parse(localStorage.getItem("todayTopic")).items.indexOf(item)]}</span>
                     </li>
                   ))}
                 </ol>
@@ -319,8 +327,13 @@ const Home = () => {
                     url={"https://maaz-net.netlify.app"}
                     text={`I have jsust completed Blindly.%0aTopic: ${
                       todayTopicData.topic
-                    }%0aIn ${(30 - count).toFixed(1)}seconds%0a${resultData.items
-                      .map((item, index) => `${index + 1}. ${item} ${emojie[5-index-1]}%0a`)
+                    }%0aIn ${(30 - count).toFixed(
+                      1
+                    )}seconds%0a${resultData.items
+                      .map(
+                        (item, index) =>
+                          `${index + 1}. ${item} ${emojie[5 - index - 1]}%0a`
+                      )
                       .join("")}`}
                   />
                 </div>
