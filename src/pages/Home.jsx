@@ -146,22 +146,13 @@ const Home = () => {
     if (keyboardIdx === 5) {
       localStorage.setItem("todayTopic", JSON.stringify(todayTopicData));
       const resultData = todayTopicData;
-      // resultData.items.map((item, index) => {
-      //   setResultData((prevData) => ({
-      //     ...prevData,
-      //     originalOrder: [...prevData.origianlOrder, index],
-      //   }));
-      // });
-      // // setTodayTopicData((prevData) => ({
-      // //   ...prevData,
-      // //   values: [...prevData.values, newValue],
-      // // }));
       resultData.items.sort(
         (a, b) =>
           resultData.values[resultData.items.indexOf(a)] -
           resultData.values[resultData.items.indexOf(b)]
       );
       resultData.values.sort((a, b) => a - b);
+      resultData.time = (30 - count).toFixed(1);
       setResultData(resultData);
       console.log(resultData);
 
@@ -299,7 +290,7 @@ const Home = () => {
             {localStorage.getItem("resultData") && (
               <>
                 <h4>Topic: {resultData.topic}</h4>
-                <h4>In {(30 - count).toFixed(1)} seconds</h4>
+                <h4>In {resultData.time} seconds</h4>
                 <ol
                   className="col-xl-6 offset-xl-3 col-md-8 offset-md-2 col-sm-12"
                   style={{
@@ -313,7 +304,15 @@ const Home = () => {
                   {resultData.items.map((item, index) => (
                     <li key={index}>
                       {item}{" "}
-                      <span>{emojie[JSON.parse(localStorage.getItem("todayTopic")).items.indexOf(item)]}</span>
+                      <span>
+                        {
+                          emojie[
+                            JSON.parse(
+                              localStorage.getItem("todayTopic")
+                            ).items.indexOf(item)
+                          ]
+                        }
+                      </span>
                     </li>
                   ))}
                 </ol>
@@ -329,7 +328,13 @@ const Home = () => {
                     )}seconds%0a${resultData.items
                       .map(
                         (item, index) =>
-                          `${index + 1}. ${item} ${emojie[JSON.parse(localStorage.getItem("todayTopic")).items.indexOf(item)]}%0a`
+                          `${index + 1}. ${item} ${
+                            emojie[
+                              JSON.parse(
+                                localStorage.getItem("todayTopic")
+                              ).items.indexOf(item)
+                            ]
+                          }%0a`
                       )
                       .join("")}`}
                   />
